@@ -1,0 +1,6 @@
+# Default ignored files
+/workspace.xml
+
+package-lock.json
+
+node_modules

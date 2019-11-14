@@ -1,0 +1,33 @@
+{
+  "name": "splitwise-rest-api",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www",
+    "pre-commit": "lint-staged"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "continuation-local-storage": "^3.2.1",
+    "express": "^4.16.4",
+    "helmet": "3.21.1",
+    "morgan": "^1.9.1",
+    "mysql": "2.16.0",
+    "mysql2": "^2.0.0",
+    "sanitize-html": "^1.20.1",
+    "saslprep": "^1.0.3",
+    "sequelize": "^5.21.2",
+    "sequelize-cli": "^5.5.1",
+    "uuid": "^3.3.3"
+  },
+  "devDependencies": {},
+  "pre-commit": [
+    "pre-commit"
+  ],
+  "lint-staged": {
+    "*.js": [
+      "prettier --write --config .prettierrc.json",
+      "git add"
+    ]
+  }
+}
