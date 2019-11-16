@@ -5,9 +5,15 @@ module.exports = (sequelize, type) => {
       primaryKey: true,
       autoIncrement: true
     },
-    name: type.STRING,
-    email: type.STRING,
-    password: type.STRING
+    first_name: type.STRING,
+    last_name: type.STRING,
+    email: {
+      type: type.STRING,
+      unique: true
+    },
+    salt: type.BLOB,
+    password: type.TEXT
   },
-    {underscored: true})
+    {underscored: true}
+    )
 };
