@@ -15,6 +15,7 @@ class RegisterUser extends ServicesBase{
     oThis.firstName = params.first_name;
     oThis.lastName = params.last_name;
     oThis.email = params.email;
+    oThis.userName = params.user_name;
     oThis.password = params.password;
   }
 
@@ -49,6 +50,7 @@ class RegisterUser extends ServicesBase{
 
     oThis.firstName = oThis.firstName.trim();
     oThis.lastName = oThis.lastName.trim();
+    oThis.userName = oThis.userName.trim();
 
     if(oThis.firstName.length > 30 || !Validators.validateName(oThis.firstName)) {
       return Promise.reject({
@@ -74,6 +76,8 @@ class RegisterUser extends ServicesBase{
       })
     }
 
+    // TODO: Validate username
+
     if(oThis.password.length<6) {
       return Promise.reject({
         internal_error_identifier: 'a_s_r_4',
@@ -90,7 +94,6 @@ class RegisterUser extends ServicesBase{
         debug_options: {}
       })
     }
-
 
   }
 
@@ -109,8 +112,10 @@ class RegisterUser extends ServicesBase{
       encryptedPassword = localCipherHelper.encrypt(salt, oThis.password);
 
     const userCreationResponse = await User.create({
-      name: oThis.name,
+      first_name: oThis.firstName,
+      last_name: oThis.lastName,
       email: oThis.email,
+      user_name: oThis.userName,
       salt: salt,
       password: encryptedPassword
     }).catch(function(err) {

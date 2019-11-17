@@ -12,7 +12,7 @@ class LoginUser extends ServicesBase{
     super(params);
     const oThis = this;
 
-    oThis.email = params.email;
+    oThis.userName = params.user_name;
     oThis.password = params.password;
   }
 
@@ -43,13 +43,7 @@ class LoginUser extends ServicesBase{
   async _validateAndSanitize() {
     const oThis = this;
 
-    if(!Validators.validateEmail(oThis.email)) {
-      return Promise.reject({
-        internal_error_identifier: 'a_s_l_1',
-        api_error_identifier: 'invalid_email',
-        debug_options: {}
-      })
-    }
+   // Validate user name.
 
     if(oThis.password.length<6) {
       return Promise.reject({
@@ -82,7 +76,7 @@ class LoginUser extends ServicesBase{
 
     const userResponse = await User.findAll({
       where: {
-        email: oThis.email
+        user_name: oThis.userName
       }
     });
 

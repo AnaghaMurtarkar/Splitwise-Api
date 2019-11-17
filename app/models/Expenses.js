@@ -8,6 +8,7 @@ module.exports = (sequelize, type) => {
       payer_id: type.INTEGER,
       payee_id: type.INTEGER,
       amount: type.BIGINT,
+      description: type.TEXT,
       status: type.INTEGER
     },
     {underscored: true})
