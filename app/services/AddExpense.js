@@ -6,7 +6,8 @@ const rootPrefix = '../..',
   ServicesBase = require(rootPrefix + '/app/services/Base'),
   ExpensesModel = require(rootPrefix + '/app/models/Expense'),
   UserBalancesModel = require(rootPrefix + '/app/models/UserBalance'),
-  mysqlProvider = require(rootPrefix + '/lib/providers/mysql');
+  mysqlProvider = require(rootPrefix + '/lib/providers/mysql'),
+  expensesConstants = require(rootPrefix + '/lib/globalConstant/expense');
 
 const mysqlInstance = mysqlProvider.getInstance();
 
@@ -109,7 +110,7 @@ class AddExpense extends ServicesBase {
       payee_id: oThis.payeeUserId,
       amount: oThis.oweAmount,
       description: oThis.description,
-      status: 1
+      status: expensesConstants.invertedStatuses[expensesConstants.activeStatus]
     }).catch(function(err) {
       if(err.parent.code === 'ER_DUP_ENTRY') {
         return Promise.reject({
