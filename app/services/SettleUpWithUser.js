@@ -9,21 +9,10 @@ const rootPrefix = '../..',
 
 const mysqlInstance = mysqlProvider.getInstance();
 
-class GetExpenseWithUser extends ServicesBase {
-
-  /**
-   * Constructor for add expense class.
-   *
-   * @param {Object} params
-   * @param {String} params.current_user_name;
-   * @param {String} params.other_user_name;
-   *
-   * @constructor
-   *
-   * @augments ServicesBase
-   */
+class SettleUpWithUser extends ServicesBase {
   constructor(params) {
     super(params);
+
     const oThis = this;
     oThis.currentUserName = params.current_user_name;
     oThis.otherUserName = params.other_user_name;
@@ -43,11 +32,11 @@ class GetExpenseWithUser extends ServicesBase {
 
     await oThis._validateAndSanitize();
 
-    const balance = await oThis._getExpense();
+    await oThis._settleUp();
 
     return {
       success: true,
-      data: {balance: balance}
+      data: {}
     }
   }
 
@@ -80,7 +69,7 @@ class GetExpenseWithUser extends ServicesBase {
 
     if(!oThis.currentUserId || !oThis.otherUserId) {
       return Promise.reject({
-        internal_error_identifier: 'a_s_gewu_1',
+        internal_error_identifier: 'a_s_suwu_1',
         api_error_identifier: 'Invalid_other_user_name',
         debug_options: {current_user_name: oThis.currentUserName,
           other_user_name: oThis.otherUserName}
@@ -89,54 +78,38 @@ class GetExpenseWithUser extends ServicesBase {
   }
 
   /**
-   * Get expenses with a particular user from user_balances table.
+   * Settle up with some user.
    *
-   * @returns {Promise<number|*>}
+   * @returns {Promise<void>}
    * @private
    */
-  async _getExpense() {
+  async _settleUp() {
     const oThis = this,
       UserBalances = UserBalancesModel(mysqlInstance, Sequelize);
 
-    const currentUserPayerResp = await UserBalances.findAll({
-      where: {
-        payer_id: oThis.currentUserId,
-        payee_id: oThis.otherUserId
-      }
-    });
+    const userBalancesResp = await UserBalances.update({
+      amount: 0
+      },
+      { where:
+          {
+            payer_id: oThis.currentUserId,
+            payee_id: oThis.otherUserId
+          }
+      });
 
-    let currentUserPayerRespDataValues = null,
-      otherUserPayerRespDataValues = null;
+    console.log('userBalancesResp =====', userBalancesResp);
+    const userBalancesResp1 = await UserBalances.update({
+        amount: 0
+      },
+      { where:
+          {
+            payer_id: oThis.otherUserId,
+            payee_id: oThis.currentUserId
+          }
+      });
 
-    if(currentUserPayerResp.length) {
-      currentUserPayerRespDataValues = currentUserPayerResp[0].dataValues;
-    }
-
-    console.log('currentUserPayerRespDataValues =====', currentUserPayerRespDataValues);
-
-    const otherUserPayerResp = await UserBalances.findAll({
-      where: {
-        payer_id: oThis.otherUserId,
-        payee_id: oThis.currentUserId
-      }
-    });
-
-    if(otherUserPayerResp.length) {
-      otherUserPayerRespDataValues = otherUserPayerResp[0].dataValues;
-    }
-
-    console.log('otherUserPayerRespDataValues =====', otherUserPayerRespDataValues);
-
-    if(currentUserPayerRespDataValues === null && otherUserPayerRespDataValues === null) {
-      return 0;
-    } else if(currentUserPayerRespDataValues === null) {
-      return -otherUserPayerRespDataValues.amount;
-    } else if(otherUserPayerRespDataValues === null) {
-      return currentUserPayerRespDataValues.amount;
-    } else {
-      return (currentUserPayerRespDataValues.amount - otherUserPayerRespDataValues.amount);
-    }
+    console.log('userBalancesResp1 =====', userBalancesResp1);
   }
 }
 
-module.exports = GetExpenseWithUser;
+module.exports = SettleUpWithUser;
