@@ -132,8 +132,7 @@ class AddExpense extends ServicesBase {
       await UserBalances.create({
         payer_id: oThis.payerUserId,
         payee_id: oThis.payeeUserId,
-        amount: oThis.oweAmount,
-        status: 1
+        amount: oThis.oweAmount
       }).catch(function(err) {
         if(err.parent.code === 'ER_DUP_ENTRY') {
           return Promise.reject({
