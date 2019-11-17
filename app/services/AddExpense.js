@@ -4,7 +4,7 @@ const rootPrefix = '../..',
   Validators = require(rootPrefix + '/lib/Validator'),
   UserModel = require(rootPrefix + '/app/models/User'),
   ServicesBase = require(rootPrefix + '/app/services/Base'),
-  ExpensesModel = require(rootPrefix + '/app/models/Expenses'),
+  ExpensesModel = require(rootPrefix + '/app/models/Expense'),
   UserBalancesModel = require(rootPrefix + '/app/models/UserBalance'),
   mysqlProvider = require(rootPrefix + '/lib/providers/mysql');
 
@@ -108,6 +108,7 @@ class AddExpense extends ServicesBase {
       payer_id: oThis.payerUserId,
       payee_id: oThis.payeeUserId,
       amount: oThis.oweAmount,
+      description: oThis.description,
       status: 1
     }).catch(function(err) {
       if(err.parent.code === 'ER_DUP_ENTRY') {

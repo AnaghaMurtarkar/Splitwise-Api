@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 
 const rootPrefix = '..',
   UserModel = require(rootPrefix + '/app/models/User'),
-  ExpenseModel = require(rootPrefix + '/app/models/Expenses'),
+  ExpenseModel = require(rootPrefix + '/app/models/Expense'),
   UserBalanceModel = require(rootPrefix + '/app/models/UserBalance'),
   coreConstants = require(rootPrefix + '/coreConstants');
 
