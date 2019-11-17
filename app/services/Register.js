@@ -11,7 +11,7 @@ class RegisterUser extends ServicesBase{
   constructor(params) {
     super(params);
     const oThis = this;
-
+    console.log('params =====', params);
     oThis.firstName = params.first_name;
     oThis.lastName = params.last_name;
     oThis.email = params.email;
