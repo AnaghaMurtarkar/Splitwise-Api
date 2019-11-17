@@ -8,7 +8,7 @@ const rootPrefix = '../..',
 
 const mysqlInstance = mysqlProvider.getInstance();
 
-class ListAll extends ServicesBase {
+class ListAllBalances extends ServicesBase {
   /**
    * Constructor for ListAll.
    *
@@ -87,5 +87,5 @@ class ListAll extends ServicesBase {
   }
 }
 
-module.exports = ListAll;
+module.exports = ListAllBalances;
 
