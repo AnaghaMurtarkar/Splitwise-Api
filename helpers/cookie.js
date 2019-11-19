@@ -8,7 +8,7 @@ const cookieDefaultOptions = {
   signed: true,
   path: '/',
   domain: coreConstants.PA_COOKIE_DOMAIN,
-  secure: true,
+  secure: false,
   sameSite: 'strict'
 };
 
