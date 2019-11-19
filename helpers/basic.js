@@ -1,4 +1,4 @@
-const rootPrefix = '..';
+const crypto = require('crypto');
 
 class BasicHelper {
   /**
@@ -24,6 +24,17 @@ class BasicHelper {
       '.' +
       date.getMilliseconds()
     );
+  }
+
+  /**
+   * Create MD5.
+   *
+   * @param {string} string
+   */
+  createMd5Digest(string) {
+    return crypto.createHash('md5')
+      .update(string)
+      .digest('hex');
   }
 }
 

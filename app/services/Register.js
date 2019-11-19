@@ -34,7 +34,13 @@ class RegisterUser extends ServicesBase{
     return {
       success: true,
       data: {
-        user: userObj
+        user: {
+          id: userObj.id,
+          first_name: userObj.first_name,
+          last_name: userObj.last_name,
+          email: userObj.email,
+          user_name: userObj.user_name
+        }
       }
     }
   }
@@ -54,6 +60,8 @@ class RegisterUser extends ServicesBase{
 
     if(oThis.firstName.length > 30 || !Validators.validateName(oThis.firstName)) {
       return Promise.reject({
+        success: false,
+        code: 422,
         internal_error_identifier: 'a_s_r_1',
         api_error_identifier: 'invalid_first_name',
         debug_options: {}
@@ -62,6 +70,8 @@ class RegisterUser extends ServicesBase{
 
     if(oThis.lastName.length > 30 || !Validators.validateName(oThis.lastName)) {
       return Promise.reject({
+        success: false,
+        code: 422,
         internal_error_identifier: 'a_s_r_2',
         api_error_identifier: 'invalid_last_name',
         debug_options: {}
@@ -70,6 +80,8 @@ class RegisterUser extends ServicesBase{
 
     if(!Validators.validateEmail(oThis.email)) {
       return Promise.reject({
+        success: false,
+        code: 422,
         internal_error_identifier: 'a_s_r_3',
         api_error_identifier: 'invalid_email',
         debug_options: {}
@@ -80,6 +92,8 @@ class RegisterUser extends ServicesBase{
 
     if(oThis.password.length<6) {
       return Promise.reject({
+        success: false,
+        code: 422,
         internal_error_identifier: 'a_s_r_4',
         api_error_identifier: 'password_too_small',
         debug_options: {}
@@ -89,6 +103,8 @@ class RegisterUser extends ServicesBase{
 
     if(oThis.password.length>16) {
       return Promise.reject({
+        success: false,
+        code: 422,
         internal_error_identifier: 'a_s_r_5',
         api_error_identifier: 'password_too_large',
         debug_options: {}
@@ -121,6 +137,8 @@ class RegisterUser extends ServicesBase{
     }).catch(function(err) {
       if(err.parent.code === 'ER_DUP_ENTRY') {
         return Promise.reject({
+          success: false,
+          code: 422,
           internal_error_identifier: 'a_s_r_6',
           api_error_identifier: 'email_already_used',
           debug_options: {}

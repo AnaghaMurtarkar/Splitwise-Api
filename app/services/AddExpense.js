@@ -36,6 +36,7 @@ class AddExpense extends ServicesBase {
 
     oThis.payerUserId = null;
     oThis.payeeUserId = null;
+    oThis.expenseId = null;
   }
 
   /**
@@ -53,7 +54,9 @@ class AddExpense extends ServicesBase {
 
     return {
       success: true,
-      data: {}
+      data: {
+        expense_id: oThis.expenseId
+      }
     }
   }
 
@@ -66,7 +69,6 @@ class AddExpense extends ServicesBase {
   async _validateAndSanitize() {
     const oThis = this,
       User = UserModel(mysqlInstance, Sequelize);
-
 
     const userResponse = await User.findAll({
       where: {
@@ -86,9 +88,11 @@ class AddExpense extends ServicesBase {
 
     if(!oThis.payerUserId || !oThis.payeeUserId) {
       return Promise.reject({
+        success: false,
+        code: 422,
         internal_error_identifier: 'a_s_ae_1',
         api_error_identifier: 'Invalid_payee_or_payer',
-        debug_options: {payer_user_name: oThis.payeeUserName,
+        debug_options: {payer_user_name: oThis.payerUserName,
         payee_user_name: oThis.payeeUserName}
       })
     }
@@ -111,17 +115,9 @@ class AddExpense extends ServicesBase {
       amount: oThis.oweAmount,
       description: oThis.description,
       status: expensesConstants.invertedStatuses[expensesConstants.activeStatus]
-    }).catch(function(err) {
-      if(err.parent.code === 'ER_DUP_ENTRY') {
-        return Promise.reject({
-          internal_error_identifier: 'a_s_ae_2',
-          api_error_identifier: 'email_already_used',
-          debug_options: {}
-        })
-      }
     });
 
-    console.log('expensesCreationResp =======', expensesCreationResp);
+    oThis.expenseId = expensesCreationResp.dataValues.id;
 
     const updateResp = await mysqlInstance.query(`UPDATE user_balances SET amount = amount + ? WHERE (payer_id = ? and payee_id = ?)`,
       {replacements:[oThis.oweAmount, oThis.payerUserId, oThis.payeeUserId]});
@@ -136,8 +132,10 @@ class AddExpense extends ServicesBase {
       }).catch(function(err) {
         if(err.parent.code === 'ER_DUP_ENTRY') {
           return Promise.reject({
+            success: false,
+            code: 500,
             internal_error_identifier: 'a_s_ae_3',
-            api_error_identifier: 'email_already_used',
+            api_error_identifier: 'something_went_wrong',
             debug_options: {}
           })
         }

@@ -24,6 +24,19 @@ class CoreConstants {
   get MYSQL_DB_NAME() {
     return process.env.MYSQL_DB_NAME;
   }
+
+  get PA_COOKIE_DOMAIN() {
+    return process.env.PA_COOKIE_DOMAIN;
+  }
+
+  get COOKIE_SECRET() {
+    return process.env.COOKIE_SECRET;
+  }
+
+  get PA_DOMAIN() {
+    return process.env.PA_DOMAIN;
+  }
+
 }
 
 module.exports = new CoreConstants();

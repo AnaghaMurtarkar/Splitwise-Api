@@ -67,10 +67,10 @@ class DeleteExpense extends ServicesBase {
       }
     });
 
-    console.log('expenseResponse', expenseResponse);
-
     if(expenseResponse.length === 0) {
       return Promise.reject({
+        success: false,
+        code: 422,
         internal_error_identifier: 'a_s_de_1',
         api_error_identifier: 'invalid_expense_id',
         debug_options: {expense_id: oThis.expenseId}
@@ -81,6 +81,8 @@ class DeleteExpense extends ServicesBase {
 
     if(oThis.expense.status === +expensesConstants.invertedStatuses[expensesConstants.deletedStatus]) {
       return Promise.reject({
+        success: false,
+        code: 422,
         internal_error_identifier: 'a_s_de_2',
         api_error_identifier: 'expense_already_deleted',
         debug_options: {expense_id: oThis.expenseId}
@@ -115,10 +117,10 @@ class DeleteExpense extends ServicesBase {
           }
       });
 
-    console.log('updateExpensesResp =========', updateExpensesResp);
-
     if(updateExpensesResp[0].affectedRows === 0) {
       return Promise.reject({
+        success: false,
+        code: 422,
         internal_error_identifier: 'a_s_de_3',
         api_error_identifier: 'expense_already_deleted',
         debug_options: {expense_id: oThis.expenseId}
@@ -127,8 +129,6 @@ class DeleteExpense extends ServicesBase {
 
     const updateUserBalancesResp = await mysqlInstance.query(`UPDATE user_balances SET amount = amount + ? WHERE (payer_id = ? and payee_id = ?)`,
       {replacements:[amount, payerId, payeeId]});
-
-    console.log('updateUserBalancesResp =========', updateUserBalancesResp);
 
     if(updateUserBalancesResp[0].affectedRows > 0) {
       // Do nothing as there are some updated rows.
@@ -139,7 +139,6 @@ class DeleteExpense extends ServicesBase {
         amount: amount
       });
 
-      console.log('userBalancesResp =========', userBalancesResp);
     }
 
   }

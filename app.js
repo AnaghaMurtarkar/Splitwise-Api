@@ -7,7 +7,7 @@ const express = require('express'),
   customUrlParser = require('url'),
   URL = require('url').URL;
 
-const requestSharedNameSpace = createNamespace('smallCaseApiNameSpace');
+const requestSharedNameSpace = createNamespace('SplitwiseApiNameSpace');
 
 const rootPrefix = '.',
   apiRoutes = require(rootPrefix + '/routes/index');
@@ -18,6 +18,8 @@ const basicHelper = require(rootPrefix + '/helpers/basic'),
   sanitizer = require(rootPrefix + '/helpers/sanitizer');
 
 const port = process.env.PORT || 3000;
+
+//const splitwiseApiHostName = new URL(coreConstants.PA_DOMAIN).hostname;
 
 morgan.token('id', function getId(req) {
   return req.id;
@@ -104,7 +106,7 @@ const setResponseHeader = async function(req, res, next) {
 // If the process is not a master
 
 // Set worker process title
-process.title = 'Smallcase api node worker';
+process.title = 'Splitwise api node worker';
 
 // Create express application instance
 const app = express();
@@ -115,9 +117,7 @@ app.use(customMiddleware());
 // Load Morgan
 app.use(
   morgan(
-    '[:pid][:id][:endTime][' +
-    coreConstants.APP_NAME +
-    '] Completed with ":status" in :response-time ms at :endDateTime -  ":res[content-length] bytes" - ":remote-addr" ":remote-user" - "HTTP/:http-version :method :url" - ":referrer" - ":user-agent"'
+    '[:pid][:id][:endTime] Completed with ":status" in :response-time ms at :endDateTime -  ":res[content-length] bytes" - ":remote-addr" ":remote-user" - "HTTP/:http-version :method :url" - ":referrer" - ":user-agent"'
   )
 );
 

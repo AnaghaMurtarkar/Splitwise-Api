@@ -80,6 +80,8 @@ class GetExpenseWithUser extends ServicesBase {
 
     if(!oThis.currentUserId || !oThis.otherUserId) {
       return Promise.reject({
+        success: false,
+        code: 422,
         internal_error_identifier: 'a_s_gewu_1',
         api_error_identifier: 'Invalid_other_user_name',
         debug_options: {current_user_name: oThis.currentUserName,

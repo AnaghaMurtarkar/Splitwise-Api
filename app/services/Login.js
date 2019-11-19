@@ -4,6 +4,7 @@ const rootPrefix = '../..',
   Validators = require(rootPrefix + '/lib/Validator'),
   UserModel = require(rootPrefix + '/app/models/User'),
   ServicesBase = require(rootPrefix + '/app/services/Base'),
+  cookieHelper = require(rootPrefix + '/helpers/cookie'),
   mysqlProvider = require(rootPrefix + '/lib/providers/mysql'),
   localCipherHelper = require(rootPrefix + '/lib/localCipher');
 
@@ -14,6 +15,8 @@ class LoginUser extends ServicesBase{
 
     oThis.userName = params.user_name;
     oThis.password = params.password;
+
+    oThis.cookieValue = null;
   }
 
   /**
@@ -30,7 +33,9 @@ class LoginUser extends ServicesBase{
 
     return {
       success: true,
-      data: {}
+      data: {
+        cookie_value: oThis.cookieValue
+      }
     }
   }
 
@@ -47,6 +52,8 @@ class LoginUser extends ServicesBase{
 
     if(oThis.password.length<6) {
       return Promise.reject({
+        success: false,
+        code: 422,
         internal_error_identifier: 'a_s_l_2',
         api_error_identifier: 'password_too_small',
         debug_options: {}
@@ -56,6 +63,8 @@ class LoginUser extends ServicesBase{
 
     if(oThis.password.length>16) {
       return Promise.reject({
+        success: false,
+        code: 422,
         internal_error_identifier: 'a_s_l_3',
         api_error_identifier: 'password_too_large',
         debug_options: {}
@@ -86,8 +95,11 @@ class LoginUser extends ServicesBase{
 
     if(oThis.password === decryptedPassword) {
       // Create cookie
+      oThis.cookieValue = cookieHelper.createLoginCookieValue(dbRow.id);
     } else {
       return Promise.reject({
+        success: false,
+        code: 422,
         internal_error_identifier: 'a_s_l_4',
         api_error_identifier: 'wrong_password',
         debug_options: {}

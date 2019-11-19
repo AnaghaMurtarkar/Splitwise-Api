@@ -26,6 +26,8 @@ class ServicesBase {
 
       if(!errorObject.internal_error_identifier) {
         errorObject = {
+          success: false,
+          code: 500,
           internal_error_identifier: 'a_s_b_1',
           api_error_identifier: 'something_went_wrong',
           debug_options: { error: err.toString(), stack: err.stack }

@@ -69,6 +69,8 @@ class SettleUpWithUser extends ServicesBase {
 
     if(!oThis.currentUserId || !oThis.otherUserId) {
       return Promise.reject({
+        success: false,
+        code: 422,
         internal_error_identifier: 'a_s_suwu_1',
         api_error_identifier: 'Invalid_other_user_name',
         debug_options: {current_user_name: oThis.currentUserName,
@@ -87,7 +89,7 @@ class SettleUpWithUser extends ServicesBase {
     const oThis = this,
       UserBalances = UserBalancesModel(mysqlInstance, Sequelize);
 
-    const userBalancesResp = await UserBalances.update({
+    await UserBalances.update({
       amount: 0
       },
       { where:
@@ -97,8 +99,7 @@ class SettleUpWithUser extends ServicesBase {
           }
       });
 
-    console.log('userBalancesResp =====', userBalancesResp);
-    const userBalancesResp1 = await UserBalances.update({
+    await UserBalances.update({
         amount: 0
       },
       { where:
@@ -107,8 +108,6 @@ class SettleUpWithUser extends ServicesBase {
             payee_id: oThis.currentUserId
           }
       });
-
-    console.log('userBalancesResp1 =====', userBalancesResp1);
   }
 }
 
