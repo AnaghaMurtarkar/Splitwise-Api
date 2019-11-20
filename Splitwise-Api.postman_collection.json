@@ -123,12 +123,12 @@
 					"urlencoded": [
 						{
 							"key": "payer_user_name",
-							"value": "abc",
+							"value": "xxx",
 							"type": "text"
 						},
 						{
 							"key": "payee_user_name",
-							"value": "xxx",
+							"value": "Anagha123",
 							"type": "text"
 						},
 						{
@@ -179,7 +179,7 @@
 					"urlencoded": []
 				},
 				"url": {
-					"raw": "http://localhost:3000/api/balances/get?current_user_name=Anagha123&other_user_name=Ankit",
+					"raw": "http://localhost:3000/api/balances/get?other_user_name=xyz",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -192,12 +192,8 @@
 					],
 					"query": [
 						{
-							"key": "current_user_name",
-							"value": "Anagha123"
-						},
-						{
 							"key": "other_user_name",
-							"value": "Ankit"
+							"value": "xyz"
 						}
 					]
 				}
@@ -224,7 +220,7 @@
 					"urlencoded": []
 				},
 				"url": {
-					"raw": "http://localhost:3000/api/expenses/list?current_user_id=3",
+					"raw": "http://localhost:3000/api/expenses/list",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -234,12 +230,6 @@
 						"api",
 						"expenses",
 						"list"
-					],
-					"query": [
-						{
-							"key": "current_user_id",
-							"value": "3"
-						}
 					]
 				}
 			},
@@ -265,7 +255,7 @@
 					"urlencoded": []
 				},
 				"url": {
-					"raw": "http://localhost:3000/api/balances/list?current_user_id=1",
+					"raw": "http://localhost:3000/api/balances/list",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -275,12 +265,6 @@
 						"api",
 						"balances",
 						"list"
-					],
-					"query": [
-						{
-							"key": "current_user_id",
-							"value": "1"
-						}
 					]
 				}
 			},
@@ -302,13 +286,8 @@
 					"mode": "urlencoded",
 					"urlencoded": [
 						{
-							"key": "current_user_name",
-							"value": "Anagha123",
-							"type": "text"
-						},
-						{
 							"key": "expense_id",
-							"value": "1",
+							"value": "2",
 							"type": "text"
 						}
 					]
@@ -344,11 +323,6 @@
 				"body": {
 					"mode": "urlencoded",
 					"urlencoded": [
-						{
-							"key": "current_user_name",
-							"value": "Anagha123",
-							"type": "text"
-						},
 						{
 							"key": "other_user_name",
 							"value": "Ankit",
