@@ -1,0 +1,7 @@
+# Ignore tmp files and folders
+/.idea
+/.idea/*
+
+package-lock.json
+
+node_modules/
