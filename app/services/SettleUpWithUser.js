@@ -14,10 +14,9 @@ class SettleUpWithUser extends ServicesBase {
     super(params);
 
     const oThis = this;
-    oThis.currentUserName = params.current_user_name;
+    oThis.currentUserId = +params.current_user_id;
     oThis.otherUserName = params.other_user_name;
 
-    oThis.currentUserId = null;
     oThis.otherUserId = null;
   }
 
@@ -53,28 +52,21 @@ class SettleUpWithUser extends ServicesBase {
 
     const userResponse = await User.findAll({
       where: {
-        user_name: [oThis.currentUserName, oThis.otherUserName]
+        user_name: [oThis.otherUserName]
       }
     });
 
-    for(let i=0;i<userResponse.length;i++) {
-      const userObj = userResponse[i].dataValues;
-
-      if(userObj.user_name === oThis.currentUserName) {
-        oThis.currentUserId = userObj.id;
-      } else if(userObj.user_name === oThis.otherUserName) {
-        oThis.otherUserId = userObj.id;
-      }
+    if(userResponse.length) {
+      oThis.otherUserId = userResponse[0].dataValues.id;
     }
 
-    if(!oThis.currentUserId || !oThis.otherUserId) {
+    if(!oThis.otherUserId) {
       return Promise.reject({
         success: false,
         code: 422,
         internal_error_identifier: 'a_s_suwu_1',
         api_error_identifier: 'Invalid_other_user_name',
-        debug_options: {current_user_name: oThis.currentUserName,
-          other_user_name: oThis.otherUserName}
+        debug_options: {other_user_name: oThis.otherUserName}
       })
     }
   }

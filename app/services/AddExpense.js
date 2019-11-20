@@ -17,6 +17,7 @@ class AddExpense extends ServicesBase {
    * Constructor for add expense class.
    *
    * @param {Object} params
+   * @param {String} params.current_user_id;
    * @param {String} params.payer_user_name;
    * @param {String} params.payee_user_name;
    * @param {Number} params.owe_amount;
@@ -29,6 +30,7 @@ class AddExpense extends ServicesBase {
   constructor(params) {
     super(params);
     const oThis = this;
+    oThis.currentUserId = +params.current_user_id;
     oThis.payerUserName = params.payer_user_name;
     oThis.payeeUserName = params.payee_user_name;
     oThis.oweAmount = params.owe_amount;
@@ -94,6 +96,19 @@ class AddExpense extends ServicesBase {
         api_error_identifier: 'Invalid_payee_or_payer',
         debug_options: {payer_user_name: oThis.payerUserName,
         payee_user_name: oThis.payeeUserName}
+      })
+    }
+
+    if(!(oThis.payerUserId === oThis.currentUserId || oThis.payeeUserId === oThis.currentUserId)){
+      return Promise.reject({
+        success: false,
+        code: 422,
+        internal_error_identifier: 'a_s_ae_1',
+        api_error_identifier: 'payee_or_payer_should_be_logged_in',
+        debug_options: {
+          payer_user_id: oThis.payerUserId,
+          payee_user_id: oThis.payeeUserId,
+          current_user_id: oThis.currentUserId}
       })
     }
   }

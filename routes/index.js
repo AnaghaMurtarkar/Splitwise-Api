@@ -3,6 +3,7 @@ const express = require('express'),
   cookieParser = require('cookie-parser');
 
 const rootPrefix = "..",
+  Validators = require(rootPrefix + '/helpers/validators'),
   LoginUser = require(rootPrefix + '/app/services/Login'),
   RegisterUser = require(rootPrefix + '/app/services/Register'),
   AddExpense = require(rootPrefix + '/app/services/AddExpense'),
@@ -12,7 +13,8 @@ const rootPrefix = "..",
   SettleUpWithUser = require(rootPrefix + '/app/services/SettleUpWithUser'),
   GetExpenseWithUser = require(rootPrefix + '/app/services/GetExpenseWithUser'),
   coreConstants = require(rootPrefix + '/coreConstants'),
-  cookieHelper = require(rootPrefix + '/helpers/cookie');
+  cookieHelper = require(rootPrefix + '/helpers/cookie'),
+  userConstants = require(rootPrefix + '/lib/globalConstant/user');
 
 router.use(cookieParser(coreConstants.COOKIE_SECRET));
 
@@ -77,13 +79,17 @@ router.post('/login', async function(req, res) {
 // Add an expense.
 router.post('/expenses/add', async function(req, res) {
 
-  console.log('req    ============', req.signedCookies);
-  const payer_user_name = req.body.payer_user_name,
+  if(Validators.validateNonEmptyObject(req.signedCookies)) {
+  const cookieElements = req.signedCookies[userConstants.loginCookieName].split(':');
+
+  const current_user_id = cookieElements[0],
+    payer_user_name = req.body.payer_user_name,
     payee_user_name = req.body.payee_user_name,
     owe_amount = req.body.owe_amount,
     description = req.body.description;
 
   new AddExpense({
+    current_user_id: current_user_id,
     payer_user_name: payer_user_name,
     payee_user_name: payee_user_name,
     owe_amount: owe_amount,
@@ -100,18 +106,22 @@ router.post('/expenses/add', async function(req, res) {
         res.send();
       }
     }
-  });
+  });} else{
+  res.status(500).json({error: 'Login cookie not found.'});
+}
 });
 
 // Get balance calculation with particular user.
 router.get('/balances/get', async function(req, res) {
 
-  console.log('req    ============', req.signedCookies);
-  const current_user_name = req.query.current_user_name,
+  if(Validators.validateNonEmptyObject(req.signedCookies)) {
+  const cookieElements = req.signedCookies[userConstants.loginCookieName].split(':');
+
+  const current_user_id = cookieElements[0],
     other_user_name = req.query.other_user_name;
 
   new GetExpenseWithUser({
-    current_user_name: current_user_name,
+    current_user_id: current_user_id,
     other_user_name: other_user_name
   }).perform().then(function(rsp){
     if(!rsp){
@@ -125,19 +135,23 @@ router.get('/balances/get', async function(req, res) {
         res.send();
       }
     }
-  });
+  });} else{
+  res.status(500).json({error: 'Login cookie not found.'});
+}
 });
 // Negative balance in this service indicates current user owe that balance to other user.
 
 // Delete expense given expense id.
 router.post('/expenses/delete', async function(req, res) {
 
-  console.log('req    ============', req.signedCookies);
-  const current_user_name = req.body.current_user_name,
+  if(Validators.validateNonEmptyObject(req.signedCookies)) {
+  const cookieElements = req.signedCookies[userConstants.loginCookieName].split(':');
+
+  const current_user_id = cookieElements[0],
     expense_id = req.body.expense_id;
 
   new DeleteExpense({
-    current_user_name: current_user_name,
+    current_user_id: current_user_id,
     expense_id: expense_id
   }).perform().then(function(rsp){
     if(!rsp){
@@ -151,63 +165,79 @@ router.post('/expenses/delete', async function(req, res) {
         res.send();
       }
     }
-  });
+  }); } else{
+  res.status(500).json({error: 'Login cookie not found.'});
+}
 });
 
 // Settle up all expenses with any particular user.
 router.post('/balances/settle', async function(req, res) {
 
-  console.log('req    ============', req.signedCookies);
-  const current_user_name = req.body.current_user_name,
-    other_user_name = req.body.other_user_name;
+  if(Validators.validateNonEmptyObject(req.signedCookies)) {
+    const cookieElements = req.signedCookies[userConstants.loginCookieName].split(':');
 
-  new SettleUpWithUser({
-    current_user_name: current_user_name,
-    other_user_name: other_user_name
-  }).perform().then(function(rsp){
-    if(!rsp){
-      res.status(500).json({});
-    } else {
-      if(rsp.success){
-        res.status(200).json(rsp);
-        res.send();
+    const current_user_id = cookieElements[0],
+      other_user_name = req.body.other_user_name;
+
+    new SettleUpWithUser({
+      current_user_id: current_user_id,
+      other_user_name: other_user_name
+    }).perform().then(function(rsp){
+      if(!rsp){
+        res.status(500).json({});
       } else {
-        res.status(rsp.code).json(rsp);
-        res.send();
+        if(rsp.success){
+          res.status(200).json(rsp);
+          res.send();
+        } else {
+          res.status(rsp.code).json(rsp);
+          res.send();
+        }
       }
-    }
-  });
+    });
+  } else{
+    res.status(500).json({error: 'Login cookie not found.'});
+  }
+
 });
 
 
 // Get current users all expenses.
 router.get('/expenses/list', async function(req, res) {
 
-  console.log('req    ============', req.signedCookies);
-  const current_user_id = req.query.current_user_id;
+  if(Validators.validateNonEmptyObject(req.signedCookies)) {
+    const cookieElements = req.signedCookies[userConstants.loginCookieName].split(':');
 
-  new ListAllExpenses({
-    current_user_id: current_user_id
-  }).perform().then(function(rsp){
-    if(!rsp){
-      res.status(500).json({});
-    } else {
-      if(rsp.success){
-        res.status(200).json(rsp);
-        res.send();
+    const current_user_id = cookieElements[0];
+
+    new ListAllExpenses({
+      current_user_id: current_user_id
+    }).perform().then(function(rsp){
+      if(!rsp){
+        res.status(500).json({});
       } else {
-        res.status(rsp.code).json(rsp);
-        res.send();
+        if(rsp.success){
+          res.status(200).json(rsp);
+          res.send();
+        } else {
+          res.status(rsp.code).json(rsp);
+          res.send();
+        }
       }
-    }
-  });
+    });
+  } else{
+    res.status(500).json({error: 'Login cookie not found.'});
+  }
+
 });
 
 // Get current users balance calculation with other users.
 router.get('/balances/list', async function(req, res) {
 
-  console.log('req    ============', req.signedCookies);
-  const current_user_id = req.query.current_user_id;
+  if(Validators.validateNonEmptyObject(req.signedCookies)) {
+    const cookieElements = req.signedCookies[userConstants.loginCookieName].split(':');
+
+    const current_user_id = cookieElements[0];
 
   new ListAllBalances({
     current_user_id: current_user_id
@@ -223,7 +253,10 @@ router.get('/balances/list', async function(req, res) {
         res.send();
       }
     }
-  });
+  }); }
+  else{
+  res.status(500).json({error: 'Login cookie not found.'});
+  }
 });
 // Negative balance in this service indicates current user owe that balance to other user.
 

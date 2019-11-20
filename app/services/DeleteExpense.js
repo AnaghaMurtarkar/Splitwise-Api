@@ -15,7 +15,7 @@ class DeleteExpense extends ServicesBase {
    * Constructor for DeleteExpense.
    *
    * @param {Object} params
-   * @param {String} params.current_user_name;
+   * @param {String} params.current_user_id;
    * @param {Number} params.expense_id;
    *
    * @augments ServicesBase
@@ -26,10 +26,8 @@ class DeleteExpense extends ServicesBase {
     super(params);
 
     const oThis = this;
-    oThis.currentUserName = params.current_user_name;
+    oThis.currentUserId = +params.current_user_id;
     oThis.expenseId = params.expense_id;
-
-    oThis.currentUserId = null;
   }
 
   /**
@@ -86,6 +84,19 @@ class DeleteExpense extends ServicesBase {
         internal_error_identifier: 'a_s_de_2',
         api_error_identifier: 'expense_already_deleted',
         debug_options: {expense_id: oThis.expenseId}
+      })
+    }
+
+    if(!(oThis.expense.payer_id === oThis.currentUserId || oThis.expense.payee_id === oThis.currentUserId)){
+      return Promise.reject({
+        success: false,
+        code: 422,
+        internal_error_identifier: 'a_s_ae_1',
+        api_error_identifier: 'payee_or_payer_should_be_logged_in',
+        debug_options: {
+          payer_user_id: oThis.expense.payer_id,
+          payee_user_id: oThis.expense.payee_id,
+          current_user_id: oThis.currentUserId}
       })
     }
   }
