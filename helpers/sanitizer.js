@@ -11,7 +11,7 @@ class SanitizeRecursively {
    */
   sanitize_params_recursively(params) {
     const oThis = this;
-    
+
     if (typeof params === 'string') {
       params = oThis._sanitizeString(params);
     } else if (typeof params === 'boolean' || typeof params === 'number' || params === null) {
@@ -31,10 +31,10 @@ class SanitizeRecursively {
       console.error('Invalid params type: ', typeof params);
       params = '';
     }
-    
+
     return params;
   }
-  
+
   /**
    * Sanitize string
    *
@@ -62,35 +62,10 @@ class Sanitizer {
   sanitizeBodyAndQuery(req, res, next) {
     req.body = sanitizeRecursively.sanitize_params_recursively(req.body);
     req.query = sanitizeRecursively.sanitize_params_recursively(req.query);
-    
+
     return next();
   }
-  
-  /**
-   * Sanitize dynamic params in URL
-   *
-   * @param req
-   * @param res
-   * @param next
-   *
-   * @returns {*}
-   */
-  sanitizeDynamicUrlParams(req, res, next) {
-    req.params = sanitizeRecursively.sanitize_params_recursively(req.params);
-    
-    return next();
-  }
-  
-  /**
-   * Sanitize object
-   *
-   * @param {object} params
-   *
-   * @returns {object}
-   */
-  sanitizeParams(params) {
-    return sanitizeRecursively.sanitize_params_recursively(params);
-  }
+
 }
 
 module.exports = new Sanitizer();

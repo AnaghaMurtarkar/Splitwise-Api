@@ -15,7 +15,7 @@
 
  mysql -uanagha -panagha
 
-mysql:
+ mysql:
     CREATE DATABASE splitwise;
     USE splitwise;
 ```
